@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/bndroll/go-project-01/pkg/config"
+	"github.com/bndroll/go-project-01/pkg/models"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,7 +19,7 @@ func NewTemplates(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateDate) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -34,7 +35,7 @@ func RenderTemplate(w http.ResponseWriter, tmpl string) {
 
 	buf := new(bytes.Buffer)
 
-	_ = t.Execute(buf, nil)
+	_ = t.Execute(buf, td)
 
 	_, err := buf.WriteTo(w)
 	if err != nil {

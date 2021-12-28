@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/bndroll/go-project-01/pkg/config"
+	"github.com/bndroll/go-project-01/pkg/models"
 	"github.com/bndroll/go-project-01/pkg/render"
 	"net/http"
 )
@@ -23,9 +24,14 @@ func NewHandlers(r *Repository) {
 }
 
 func (m *Repository) Home(w http.ResponseWriter, _ *http.Request) {
-	render.RenderTemplate(w, "home.page.tmpl")
+	render.RenderTemplate(w, "home.page.tmpl", &models.TemplateDate{})
 }
 
 func (m *Repository) About(w http.ResponseWriter, _ *http.Request) {
-	render.RenderTemplate(w, "about.page.tmpl")
+	stringMap := make(map[string]string)
+	stringMap["test"] = "Hello World !"
+
+	render.RenderTemplate(w, "about.page.tmpl", &models.TemplateDate{
+		StringMap: stringMap,
+	})
 }
