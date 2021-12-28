@@ -3,6 +3,7 @@ package render
 import (
 	"bytes"
 	"fmt"
+	"github.com/bndroll/go-project-01/pkg/config"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,25 +12,31 @@ import (
 
 var functions = template.FuncMap{}
 
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	/* TODO get the template cache from the app config */
+var app *config.AppConfig
 
-	tc, err := CreateTemplateCache()
-	if err != nil {
-		log.Fatal(err)
+func NewTemplates(a *config.AppConfig) {
+	app = a
+}
+
+func RenderTemplate(w http.ResponseWriter, tmpl string) {
+	var tc map[string]*template.Template
+
+	if app.UseCache {
+		tc = app.TemplateCache
+	} else {
+		tc, _ = CreateTemplateCache()
 	}
 
 	t, ok := tc[tmpl]
 	if !ok {
-		log.Fatal(err)
+		log.Fatal("couldn't get template from template cache")
 	}
 
 	buf := new(bytes.Buffer)
 
 	_ = t.Execute(buf, nil)
 
-	_, err = buf.WriteTo(w)
-
+	_, err := buf.WriteTo(w)
 	if err != nil {
 		fmt.Println("error writing template to browser", err)
 	}
